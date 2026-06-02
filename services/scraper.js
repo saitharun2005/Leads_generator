@@ -10,8 +10,15 @@ export function runPythonScraper(query) {
     const scriptPath = path.join(__dirname, "..", "scraper.py");
     console.log(`Spawning Python scraper at: ${scriptPath} with query: "${query}"`);
     
-    // Spawn python process
-    const py = spawn("python", [scriptPath, query]);
+    // Spawn python process (python3 on Unix-like systems, python on Windows)
+    const pythonCmd = process.platform === "win32" ? "python" : "python3";
+    const py = spawn(pythonCmd, [scriptPath, query]);
+
+    py.on("error", (err) => {
+      console.error("Failed to spawn Python process:", err);
+      reject(new Error(`Failed to spawn Python process: ${err.message}`));
+    });
+
     
     let dataString = "";
     let errorString = "";
