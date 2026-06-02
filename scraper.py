@@ -1033,7 +1033,31 @@ def run_play_scraper(params):
     # Save updated cache to disk
     _save_cache(list(cache_dict.values()))
 
-    # If no apps found (e.g. cloud IP blocked or empty cache), generate high-quality fallback leads
+    # Robust fallback: If we have very few matching apps (less than 15),
+    # let's relax the downloads range filter and pull more real apps of the same category from cache!
+    if len(matching_leads) < 15:
+        for app in cache_list:
+            if len(matching_leads) >= 15:
+                break
+            
+            # Check category matching
+            if not is_category_match(app.get("category"), category_label):
+                continue
+                
+            # Skip if already in matching leads
+            if any(m["appId"] == app["appId"] for m in matching_leads):
+                continue
+                
+            # Skip if not Indian
+            if not app.get("isIndian", True):
+                continue
+                
+            info = dict(app)
+            if "isIndian" in info:
+                del info["isIndian"]
+            matching_leads.append(info)
+
+    # Ultimate fallback: if still no apps, generate high-quality mock apps
     if not matching_leads:
         matching_leads = generate_mock_apps(category_label, downloads_filter, count=15)
 
