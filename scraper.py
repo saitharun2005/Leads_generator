@@ -320,7 +320,7 @@ def _extract_app_ids(html):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def parse_downloads_count(dl_str):
-    """Convert badge string like '500M+', '10K+', '1,000+' to an integer."""
+    """Convert badge string like '500M+', '10K+', '10Cr+', '50L+', '1,000+' to an integer."""
     if not dl_str:
         return 0
     s = dl_str.replace(",", "").replace("+", "").strip().lower()
@@ -329,6 +329,11 @@ def parse_downloads_count(dl_str):
             return int(float(s.replace('b', '')) * 1_000_000_000)
         elif 'm' in s:
             return int(float(s.replace('m', '')) * 1_000_000)
+        elif 'cr' in s:
+            return int(float(s.replace('cr', '')) * 10_000_000)
+        elif 'l' in s:
+            clean_val = s.replace('lakh', '').replace('l', '')
+            return int(float(clean_val) * 100_000)
         elif 'k' in s:
             return int(float(s.replace('k', '')) * 1_000)
         return int(s)
@@ -1035,7 +1040,8 @@ def run_play_scraper(params):
 
     # Robust fallback: If we have very few matching apps (less than 15),
     # let's relax the downloads range filter and pull more real apps of the same category from cache!
-    if len(matching_leads) < 15:
+    # ONLY do this if no specific download range was requested, to keep the downloads filter working strictly!
+    if not downloads_filter and len(matching_leads) < 15:
         for app in cache_list:
             if len(matching_leads) >= 15:
                 break
