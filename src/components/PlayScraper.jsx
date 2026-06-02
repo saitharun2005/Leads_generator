@@ -141,6 +141,7 @@ const DOWNLOAD_RANGES = [
   { label: "All Downloads", value: "" },
   { label: "1 – 100",       value: "1-100" },
   { label: "100 – 1,000",   value: "100-1000" },
+  { label: "1K – 100K",     value: "1k-100k" },
   { label: "1K – 2K",       value: "1k-2k" },
   { label: "2K – 5K",       value: "2k-5k" },
   { label: "5K – 10K",      value: "5k-10k" },
