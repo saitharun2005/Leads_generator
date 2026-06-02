@@ -27,6 +27,18 @@ if (process.env.DATA_DIR && !fs.existsSync(DATA_DIR)) {
   }
 }
 const DB_PATH = path.join(DATA_DIR, "db.json");
+const DEFAULT_DB_PATH = path.join(__dirname, "db.json");
+
+// Copy default db.json if missing from custom DATA_DIR
+if (process.env.DATA_DIR && !fs.existsSync(DB_PATH) && fs.existsSync(DEFAULT_DB_PATH)) {
+  try {
+    fs.copyFileSync(DEFAULT_DB_PATH, DB_PATH);
+    console.log(`Copied default db.json to ${DB_PATH}`);
+  } catch (err) {
+    console.error(`Failed to copy default db.json:`, err);
+  }
+}
+
 
 
 // Helper to read database

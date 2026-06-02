@@ -691,15 +691,27 @@ def _clean_addr(raw):
 # ─────────────────────────────────────────────────────────────────────────────
 
 import os
+import shutil
 DATA_DIR = os.environ.get("DATA_DIR", "")
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DEFAULT_CACHE_PATH = os.path.join(SCRIPT_DIR, "scraped_apps_cache.json")
+
 if DATA_DIR:
     try:
         os.makedirs(DATA_DIR, exist_ok=True)
     except Exception:
         pass
     CACHE_FILE = os.path.join(DATA_DIR, "scraped_apps_cache.json")
+    
+    # Copy pre-populated cache if missing from custom DATA_DIR
+    if not os.path.exists(CACHE_FILE) and os.path.exists(DEFAULT_CACHE_PATH):
+        try:
+            shutil.copy2(DEFAULT_CACHE_PATH, CACHE_FILE)
+        except Exception:
+            pass
 else:
     CACHE_FILE = "scraped_apps_cache.json"
+
 
 
 def _load_cache():
