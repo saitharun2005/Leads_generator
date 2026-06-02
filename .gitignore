@@ -25,7 +25,6 @@ dist-ssr
 
 # Project Databases & Caches
 db.json
-scraped_apps_cache.json
 scratch/
 __pycache__/
 *.pyc
