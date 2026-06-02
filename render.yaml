@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: prospectos-leads-generator
+    env: docker
+    plan: free
+    envVars:
+      - key: DATA_DIR
+        value: /app/data
+      - key: PORT
+        value: "5000"
+    disk:
+      name: leads-data
+      mountPath: /app/data
+      sizeGB: 1
